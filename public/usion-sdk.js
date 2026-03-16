@@ -918,11 +918,22 @@
 
         if (!roomId) return Promise.reject(new Error('No room ID provided'));
         if (!serviceId) return Promise.reject(new Error('No service ID provided'));
-        if (!apiUrl) return Promise.reject(new Error('No API URL provided'));
-        if (!token) return Promise.reject(new Error('No auth token available'));
 
         this.roomId = roomId;
         this.playerId = Usion.user.getId();
+
+        // When embedded (iframe/WebView), proxy through parent app to avoid
+        // CORS / Private Network Access issues (e.g. HTTPS iframe → HTTP localhost)
+        if (Usion._isEmbedded) {
+          return Usion._request('GAME_ACCESS_REQUEST', {
+            room_id: roomId,
+            service_id: serviceId,
+            protocol_version: (config.protocolVersion || Usion.config.protocolVersion || Usion.config.protocol_version || '2')
+          }, 10000);
+        }
+
+        if (!apiUrl) return Promise.reject(new Error('No API URL provided'));
+        if (!token) return Promise.reject(new Error('No auth token available'));
 
         var cleanApiUrl = String(apiUrl).replace(/\/$/, '');
         var endpoint = cleanApiUrl + '/games/rooms/' + encodeURIComponent(roomId) + '/access';

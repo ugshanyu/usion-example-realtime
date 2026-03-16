@@ -145,8 +145,10 @@ server.onRealtime('move', (data, player, room) => {
         state.players[player.id] = result.tagger;
         state.players[otherId] = result.target;
 
-        // Notify all players of the tag
-        room.broadcast('tag', {
+        // Notify all players of the tag (use state_delta so SDK dispatches to onRealtime)
+        room.broadcast('state_delta', {
+          type: 'tag',
+          action_type: 'tag',
           tagger: player.id,
           tagged: otherId,
         });
