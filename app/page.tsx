@@ -295,14 +295,15 @@ export default function GamePage() {
   });
 
   // ─── Canvas Setup ───────────────────────────────────────
-  document.addEventListener('DOMContentLoaded', function() {
-    var app = document.getElementById('app');
+  // Script runs via afterInteractive so DOM is already ready
+  var app = document.getElementById('app');
+  if (app) {
     app.innerHTML =
       '<canvas id="game-canvas" width="' + ARENA_W + '" height="' + ARENA_H + '"></canvas>';
     canvas = document.getElementById('game-canvas');
     ctx = canvas.getContext('2d');
     gameLoop();
-  });
+  }
 })();
       `}</Script>
 
